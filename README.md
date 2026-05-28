@@ -70,3 +70,42 @@ os-structure/
 ## Curation Practice
 
 Alfie is not a fork of gstack — it's a separate product that monitors gstack as a reference. See `docs/CURATION.md` for the standing practice of reviewing gstack updates and deciding what to incorporate.
+
+## Working from iPad / Remote Sessions
+
+Alfie runs in two surfaces:
+
+- **Mac (full)** — local Claude Code with Warp, gstack browser, Preview-flashed Alfie images. All 10 dev-flow steps available.
+- **Remote (cloud)** — Claude Code on the web from iPad, browser, or anywhere. ASCII Alfie fallback. Steps that need a local browser are deferred.
+
+The template auto-detects which one you're in (`$CLAUDECODE_REMOTE` set OR no `sips` on PATH → remote) and adjusts.
+
+### What works where
+
+| Step | Mac | Remote |
+|------|-----|--------|
+| `/brainstorm` | ✓ | ✓ |
+| `/plan` | ✓ | ✓ |
+| `/autoplan` | ✓ | ✓ |
+| `/build → /work` | ✓ | ✓ |
+| `/build → /orchestrate` | ✓ | falls back to `/work` |
+| `/qa` | ✓ | defer (needs gstack browser) |
+| `/review` | ✓ | ✓ |
+| `/ship` | ✓ | ✓ |
+| `/canary` | ✓ | defer (needs gstack browser) |
+| `/codify` | ✓ | ✓ |
+| `/done` | ✓ | ✓ |
+| Alfie character | image flash | ASCII frames |
+
+### Setting up an iPad
+
+1. **Claude Code on the web** at claude.ai/code — Safari → Share → Add to Home Screen for an app-like surface.
+2. **Bluetooth keyboard.** Slash commands aren't pleasant on the on-screen keyboard.
+3. **GitHub mobile app** for PR review and merge alongside `/ship`.
+4. **Optional: Claude Dispatch** (iPhone, Max/Pro) to drive your home Mac for `/qa` and `/canary` while you're remote.
+
+### Before a trip
+
+- Draft any `/brainstorm` and `/plan` work in advance so remote sessions can run `/build → /work` from approved plans.
+- Leave the home Mac powered on with `caffeinate` running if you want Dispatch as a fallback.
+- Pin Claude Code on the web to the iPad home screen and verify GitHub mobile is signed in.
