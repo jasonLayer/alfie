@@ -80,6 +80,8 @@ Alfie runs in two surfaces:
 
 The template auto-detects which one you're in (`$CLAUDECODE_REMOTE` set OR no `sips` on PATH → remote) and adjusts.
 
+When you run `/build` in a remote session, Alfie scans the plan, splits Mac-only tasks (`/qa`, `/canary`, browser tests) into a sibling file `docs/plans/<plan>-mac-followup.md`, and builds only what can run remotely. Pick up the follow-up plan when you're back at the Mac.
+
 ### What works where
 
 | Step | Mac | Remote |
@@ -89,10 +91,10 @@ The template auto-detects which one you're in (`$CLAUDECODE_REMOTE` set OR no `s
 | `/autoplan` | ✓ | ✓ |
 | `/build → /work` | ✓ | ✓ |
 | `/build → /orchestrate` | ✓ | falls back to `/work` |
-| `/qa` | ✓ | defer (needs gstack browser) |
+| `/qa` | ✓ | auto-split into `<plan>-mac-followup.md` |
 | `/review` | ✓ | ✓ |
 | `/ship` | ✓ | ✓ |
-| `/canary` | ✓ | defer (needs gstack browser) |
+| `/canary` | ✓ | auto-split into `<plan>-mac-followup.md` |
 | `/codify` | ✓ | ✓ |
 | `/done` | ✓ | ✓ |
 | Alfie character | image flash | ASCII frames |

@@ -37,6 +37,62 @@ Read the full plan. Extract:
 - The Dependencies section (if present)
 - Phase structure (if present)
 
+### Step 1.5: Remote-session preflight
+
+Run the same remote check used elsewhere in Alfie:
+
+```bash
+if [ -n "${CLAUDECODE_REMOTE:-}" ] || ! command -v sips >/dev/null 2>&1; then
+  echo "remote"
+else
+  echo "mac"
+fi
+```
+
+**If `mac`:** skip this step.
+
+**If `remote`:** Some dev-flow steps need a Mac (gstack browser for `/qa` and `/canary`, Preview-flashed Alfie images, Warp panes). Scan the plan and split Mac-only work into a follow-up plan so this build stays focused on what can actually run here.
+
+1. Scan plan tasks for Mac-only markers. Treat as Mac-only if the task:
+   - Invokes `/qa` or `/canary`, or describes the work those skills do (end-to-end browser test, post-deploy monitoring loop)
+   - Requires manual visual verification ("click through", "screenshot", "visual check", "QA the UI")
+   - Requires local-only tools (Warp panes, native apps, hardware, gstack browser)
+
+2. **If ALL tasks are Mac-only:** abort. Tell Jason:
+   ```
+   This plan is entirely Mac-bound. Either:
+     - Finish it on your Mac
+     - Kick it off from iPhone via Claude Dispatch to your home Mac
+   No build dispatched.
+   ```
+   Don't proceed to Step 2.
+
+3. **If SOME tasks are Mac-only:** create a sibling follow-up plan at
+   `docs/plans/<source-basename>-mac-followup.md` (only if it doesn't already exist; if it does, append new items idempotently). Format:
+
+   ```markdown
+   # <Plan name> — Mac follow-up
+
+   Deferred from a remote session on <YYYY-MM-DD>.
+   Run these back at the Mac, or kick them off via Claude Dispatch from iPhone.
+
+   Source plan: [<source-basename>.md](<source-basename>.md)
+
+   ## Deferred tasks
+   - [ ] **<task ID or short name>** — <one-line context> (originally requires `/qa`)
+   - [ ] **<task ID or short name>** — <one-line context> (originally requires `/canary`)
+   ```
+
+   Report to Jason in the build announcement:
+   ```
+   Remote session detected. Mac-only work moved to:
+     docs/plans/<source-basename>-mac-followup.md
+       - <count> deferred task(s): <one-line summary>
+   Continuing build with the remaining <N> task(s).
+   ```
+
+   Then continue to Step 2 with **only the non-deferred tasks** considered for routing and dispatch.
+
 ### Step 2: Analyze and Route
 
 Score the plan on three dimensions:
@@ -114,6 +170,14 @@ Tests: [test results]
 Next: /review for structured review, or /done to close the loop.
 ```
 
+**If a Mac follow-up plan was created in Step 1.5,** include it in the handoff:
+
+```
+Mac follow-up still pending:
+  docs/plans/<source-basename>-mac-followup.md (<N> deferred task(s))
+  Pick up when you're back at the Mac, or run via Claude Dispatch.
+```
+
 ## Direct Override
 
 Jason can always bypass the foreman:
@@ -130,3 +194,5 @@ The foreman never overrides an explicit choice.
 - **Plan has 0 tasks completed, 0 remaining:** The plan may already be done — check and confirm
 - **Git repo not initialized:** Skip branching, work directly (common for config-only work like ~/.claude/)
 - **Mixed testable and non-testable tasks:** TDD applies to code tasks. Config/docs tasks get manual verification.
+- **Remote session, all tasks Mac-only:** Step 1.5 aborts the build. No follow-up plan is created (the source plan itself already lists everything Mac-bound).
+- **Remote session, follow-up plan already exists:** Append new deferred items to the existing file; don't overwrite. Skip if the item is already listed.

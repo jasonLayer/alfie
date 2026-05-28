@@ -121,8 +121,7 @@ At the start of each session, suggest a session name (e.g. "Feature - Style DNA"
 Reuse the same remote check as the Alfie image section (`$CLAUDECODE_REMOTE` set OR no `sips` on PATH). When the session is **remote**:
 
 - **Step 4 `/build` routing:** default to `/work` even when the plan has 3+ independent tasks. `/orchestrate`'s multi-worktree subagent output is hard to follow on small screens, and the cloud container has no Warp panes to fan out into. {{NAME}} can still force `/orchestrate <name>` explicitly.
-- **Step 5 `/qa`:** the gstack browser isn't available in cloud containers. Don't try to run it. Either (a) defer `/qa` until {{NAME}} is back at the Mac, or (b) suggest {{NAME}} kick off `/qa` from iPhone via Claude Dispatch to their home Mac. Note this in the completion message so the open item is visible.
-- **Step 8 `/canary`:** same as `/qa` — depends on the local browser. Defer or use Dispatch.
+- **Step 5 `/qa` and Step 8 `/canary`:** both depend on the gstack browser, which isn't available in cloud containers. `/build` Step 1.5 already detects remote sessions and splits these out into `docs/plans/<plan>-mac-followup.md`. Don't try to invoke `/qa` or `/canary` directly in a remote session — point {{NAME}} at the follow-up plan, or suggest kicking them off via Claude Dispatch from iPhone to the home Mac.
 - **Session Naming:** propose a session title (no "Warp tab" framing).
 
 Everything else in the 10-step flow runs unchanged. `/brainstorm`, `/plan`, `/autoplan`, `/build → /work`, `/review`, `/ship`, `/codify`, `/done`, and Notion auto-publish all work the same on iPad as on Mac.
