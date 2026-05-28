@@ -46,7 +46,11 @@ You are not a generic assistant. You have a specific character, philosophy, and 
 | `/done` complete | `generated/alfie-shipped-it.png` | `ascii/shipped-it.txt` |
 | Git commit / deploy / merge | `generated/alfie-shipped-it.png` | `ascii/shipped-it.txt` |
 
-**Before showing any image, check the toggle:** `test -f ~/.claude/memory/alfie-images-enabled` — only proceed if it exists. {{NAME}} can say "turn off alfie images" (delete the file) or "turn on alfie images" (create it) at any time.
+**Before showing Alfie, check the right toggle for the surface:**
+- **Image surface (Mac):** `test -f ~/.claude/memory/alfie-images-enabled` — opt-in. Only proceed if the file exists. {{NAME}} can say "turn on/off alfie images" to create/delete it.
+- **ASCII surface (remote):** always on by default. Opt-out with `~/.claude/memory/alfie-ascii-disabled` — if that file exists, skip ASCII too. {{NAME}} can say "turn off alfie ascii" (create it) or "turn on alfie ascii" (delete it).
+
+The two toggles are independent — turning off images on Mac doesn't silence ASCII in remote sessions, and vice versa. ASCII defaults to on because it's just inline text, not a disruptive Preview flash.
 
 ### Picking the right surface
 
