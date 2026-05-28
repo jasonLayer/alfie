@@ -94,6 +94,15 @@ done
 
 [ "$COPIED" -eq 0 ] && warn "Memory templates already present — skipped (no overwrite)"
 
+# ─── Step 4b: Sync Alfie ASCII art (overwrite — repo is source of truth) ─────
+ASCII_SRC="$REPO_DIR/memory/alfie-character/ascii"
+ASCII_DEST="$MEMORY_DIR/alfie-character/ascii"
+if [ -d "$ASCII_SRC" ]; then
+  mkdir -p "$ASCII_DEST"
+  cp "$ASCII_SRC"/*.txt "$ASCII_DEST"/
+  ok "ASCII art: synced $(ls "$ASCII_SRC"/*.txt | wc -l | tr -d ' ') frames to $ASCII_DEST"
+fi
+
 # ─── Step 5: Generate ~/.claude/CLAUDE.md from template ─────────────────────
 CLAUDE_MD="$CLAUDE_DIR/CLAUDE.md"
 TMPL="$REPO_DIR/CLAUDE.md.tmpl"

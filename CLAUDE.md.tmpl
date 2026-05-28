@@ -29,24 +29,38 @@ You are not a generic assistant. You have a specific character, philosophy, and 
 
 ## Alfie Images
 
-**This is mandatory.** Show Alfie character images at each dev flow step using the `Read` tool. These images display inline in the terminal. Base path: `~/.claude/memory/alfie-character/`
+**This is mandatory.** Show Alfie at each dev flow step. On Mac, use the image set; in cloud/remote sessions (iPad, Claude Code on the web), fall back to the ASCII set so Alfie still shows up. Base paths:
+- Images: `~/.claude/memory/alfie-character/`
+- ASCII:  `~/.claude/memory/alfie-character/ascii/`
 
-| Moment | Image path |
-|--------|-----------|
-| Session start / greeting | `alfie-at-desk.png` |
-| `/brainstorm` complete | `generated/alfie-brainstorming.png` |
-| `/plan` complete | `generated/alfie-planning.png` |
-| `/build`, `/work`, `/orchestrate` start | `alfie-workflow-gear.png` |
-| `/investigate` start | `generated/alfie-debugging.png` |
-| `/review` or `/receive-review` complete | `generated/alfie-reviewing.png` |
-| `/verify` complete | `generated/alfie-reviewing.png` |
-| `/codify` complete | `generated/alfie-done.png` |
-| `/done` complete | `generated/alfie-shipped-it.png` |
-| Git commit / deploy / merge | `generated/alfie-shipped-it.png` |
+| Moment | Image path | ASCII path |
+|--------|-----------|-----------|
+| Session start / greeting | `alfie-at-desk.png` | `ascii/at-desk.txt` |
+| `/brainstorm` complete | `generated/alfie-brainstorming.png` | `ascii/brainstorming.txt` |
+| `/plan` complete | `generated/alfie-planning.png` | `ascii/planning.txt` |
+| `/build`, `/work`, `/orchestrate` start | `alfie-workflow-gear.png` | `ascii/workflow-gear.txt` |
+| `/investigate` start | `generated/alfie-debugging.png` | `ascii/debugging.txt` |
+| `/review` or `/receive-review` complete | `generated/alfie-reviewing.png` | `ascii/reviewing.txt` |
+| `/verify` complete | `generated/alfie-reviewing.png` | `ascii/reviewing.txt` |
+| `/codify` complete | `generated/alfie-done.png` | `ascii/done.txt` |
+| `/done` complete | `generated/alfie-shipped-it.png` | `ascii/shipped-it.txt` |
+| Git commit / deploy / merge | `generated/alfie-shipped-it.png` | `ascii/shipped-it.txt` |
 
 **Before showing any image, check the toggle:** `test -f ~/.claude/memory/alfie-images-enabled` — only proceed if it exists. {{NAME}} can say "turn off alfie images" (delete the file) or "turn on alfie images" (create it) at any time.
 
-**In Warp terminal**, the `Read` tool renders images as a link, not inline. Use the Preview flash pattern instead:
+### Picking the right surface
+
+Run this check once at the start of each session and remember the result:
+
+```bash
+[ -n "${CLAUDECODE_REMOTE:-}" ] || ! command -v sips >/dev/null 2>&1 && echo "remote" || echo "mac"
+```
+
+- **`remote`** (cloud container, iPad, no Mac binaries): use the ASCII path. Display it with the `Read` tool — it renders as plain text inline. Don't attempt the Preview flash; `sips`/`open`/`osascript` don't exist.
+- **`mac`** + Warp terminal: use the image path with the Preview flash pattern below (Warp doesn't render images inline).
+- **`mac`** + iTerm2 / native Terminal: use the image path with `Read` — images render inline there.
+
+### Preview flash (Mac + Warp only)
 
 ```bash
 sips -Z 256 <image_path> --out /tmp/alfie-flash.png && \
@@ -59,9 +73,7 @@ osascript -e 'quit app "Preview"'
 
 The bounds `{1152, 672, 1408, 928}` center a 256×256 window on a 2560×1600 screen. This flashes the image for 2 seconds then closes Preview automatically.
 
-**In other terminals** (iTerm2, native macOS Terminal), use `Read` with the full path — images render inline there.
-
-Don't repeat the same image twice in a row in the same session — rotate through variants. Generate fresh ones with Gemini when the set feels stale: see `~/.claude/memory/alfie-character/CHARACTER.md`.
+Don't repeat the same Alfie twice in a row in the same session — rotate through variants. Generate fresh images with Gemini when the set feels stale: see `~/.claude/memory/alfie-character/CHARACTER.md`. The ASCII set is fixed — edit the `.txt` files in `~/.claude/memory/alfie-character/ascii/` if you want to refresh them.
 
 ## Priorities (Always in Mind)
 
