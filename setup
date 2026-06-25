@@ -75,7 +75,32 @@ done
 
 ok "Skills linked: $LINKED new, $SKIPPED already up-to-date"
 
-# ─── Step 4: Copy memory templates (no overwrite) ────────────────────────────
+# ─── Step 4: Symlink extension skills into ~/.claude/skills-ext/ ─────────────
+SKILLS_EXT_DIR="$CLAUDE_DIR/skills-ext"
+mkdir -p "$SKILLS_EXT_DIR"
+EXT_LINKED=0
+EXT_SKIPPED=0
+
+for skill_dir in "$REPO_DIR/skills-ext"/*/; do
+  [ -d "$skill_dir" ] || continue
+  skill_name="$(basename "$skill_dir")"
+  src="$REPO_DIR/skills-ext/$skill_name"
+  dest="$SKILLS_EXT_DIR/$skill_name"
+
+  if [ -L "$dest" ]; then
+    ln -snf "$src" "$dest"
+    EXT_SKIPPED=$((EXT_SKIPPED + 1))
+  elif [ -d "$dest" ]; then
+    warn "skills-ext/$skill_name: real directory exists — skipping"
+  else
+    ln -snf "$src" "$dest"
+    EXT_LINKED=$((EXT_LINKED + 1))
+  fi
+done
+
+ok "Extension skills linked: $EXT_LINKED new, $EXT_SKIPPED already up-to-date"
+
+# ─── Step 6: Copy memory templates (no overwrite) ────────────────────────────
 mkdir -p "$MEMORY_DIR"
 COPIED=0
 
@@ -94,7 +119,7 @@ done
 
 [ "$COPIED" -eq 0 ] && warn "Memory templates already present — skipped (no overwrite)"
 
-# ─── Step 5: Generate ~/.claude/CLAUDE.md from template ─────────────────────
+# ─── Step 7: Generate ~/.claude/CLAUDE.md from template ─────────────────────
 CLAUDE_MD="$CLAUDE_DIR/CLAUDE.md"
 TMPL="$REPO_DIR/CLAUDE.md.tmpl"
 
